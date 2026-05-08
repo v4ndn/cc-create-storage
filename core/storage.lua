@@ -34,6 +34,23 @@ function M.getStats(name)
   return { total = total, capacity = capacity, pct = pct }
 end
 
+function M.pruneMissing(storages)
+  local active = {}
+  for _, name in pairs(peripheral.getNames()) do
+    active[name] = true
+  end
+  for id, _ in pairs(storages) do
+    if not active[id] then
+      storages[id] = nil
+    end
+  end
+  for id, info in pairs(storages) do
+    if info.reciever and not active[info.reciever] then
+      info.reciever = nil
+    end
+  end
+end
+
 function M.detectNew(storages)
   for _, name in pairs(peripheral.getNames()) do
     if name:sub(1, #config.PERIPHERAL_PREFIX) == config.PERIPHERAL_PREFIX then
