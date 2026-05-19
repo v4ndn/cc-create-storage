@@ -97,12 +97,21 @@ function M.run(storages)
     end
   end
 
+  local function pullManagerEvent()
+    while true do
+      local event, p1, p2, p3 = os.pullEvent()
+      if event == "mouse_click" or event == "mouse_scroll" or event == "key" or event == "key_up" then
+        return event, p1, p2, p3
+      end
+    end
+  end
+
   storage.pruneMissing(storages)
   storage.detectNew(storages)
+  drawMenu()
 
   while true do
-    drawMenu()
-    local event, arg, mx, my = os.pullEvent()
+    local event, arg, mx, my = pullManagerEvent()
 
     if event == "mouse_click" then
       for k, v in pairs(buttons) do
@@ -110,6 +119,7 @@ function M.run(storages)
           v.onClick(arg)
         end
       end
+      drawMenu()
 
     elseif event == "mouse_scroll" then
       if shiftModifier then
@@ -117,6 +127,7 @@ function M.run(storages)
       else
         startY = startY - arg
       end
+      drawMenu()
 
     elseif event == "key" then
       if arg == keys.leftShift then

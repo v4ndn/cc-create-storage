@@ -87,6 +87,22 @@ function M.findLowestVault(storages)
   return best
 end
 
+function M.findLowestNVaults(storages, n)
+  local vaults = {}
+  for id, info in pairs(storages) do
+    if info.role == "vault" then
+      local total = M.countItems(id)
+      vaults[#vaults + 1] = { id = id, count = total, reciever = info.reciever }
+    end
+  end
+  table.sort(vaults, function(a, b) return a.count < b.count end)
+  local result = {}
+  for i = 1, math.min(n, #vaults) do
+    result[#result + 1] = vaults[i]
+  end
+  return result
+end
+
 function M.setRole(storages, name, role)
   if storages[name] then
     storages[name].role = role
